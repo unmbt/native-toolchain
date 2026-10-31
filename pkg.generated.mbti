@@ -1,0 +1,37 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "unmbt/native-toolchain"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub async fn discover(builder? : String) -> Toolchain
+
+// Errors
+
+// Types and methods
+pub(all) enum Host {
+  Windows
+  Posix
+} derive(Eq, @debug.Debug)
+
+pub struct Tool {
+  name : String
+  path : String
+} derive(Eq, @debug.Debug)
+
+pub struct Toolchain {
+  host : Host
+  compiler : Tool?
+  linker : Tool?
+  archiver : Tool?
+  symbol_tool : Tool?
+  sdk : String?
+  diagnostics : Array[String]
+} derive(@debug.Debug)
+pub fn Toolchain::is_usable(Self) -> Bool
+
+// Type aliases
+
+// Traits
