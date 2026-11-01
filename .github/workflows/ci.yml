@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hustcer/setup-moonbit@v1
+        with:
+          version: '0.10.18+6c83a7f62'
+          core-version: '0.10.18+6c83a7f62'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: moon update
+      - run: moon test --target native
+      - run: moon check --target native
+      - run: moon build --target native --release
+
+  publish:
+    name: Publish to mooncakes.io
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hustcer/setup-moonbit@v1
+        with:
+          version: '0.10.18+6c83a7f62'
+          core-version: '0.10.18+6c83a7f62'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: moon update
+      - name: Verify tag version
+        shell: bash
+        run: |
+          module_version="$(sed -n 's/^version = "\(.*\)"/\1/p' moon.mod | head -n 1)"
+          if [ "v${module_version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match moon.mod version ${module_version}."
+            exit 1
+          fi
+      - name: Configure Mooncakes credentials
+        shell: bash
+        env:
+          MOONCAKES_CREDENTIALS: ${{ secrets.MOONCAKES_CREDENTIALS }}
+        run: |
+          if [ -z "${MOONCAKES_CREDENTIALS}" ]; then
+            echo "MOONCAKES_CREDENTIALS is not configured."
+            exit 1
+          fi
+          install -d -m 700 "${HOME}/.moon"
+          printf '%s' "${MOONCAKES_CREDENTIALS}" > "${HOME}/.moon/credentials.json"
+          chmod 600 "${HOME}/.moon/credentials.json"
+      - name: Publish module
+        run: moon publish
