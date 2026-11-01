@@ -1,6 +1,6 @@
 name = "unmbt/native-toolchain"
 
-version = "0.1.0"
+version = "0.1.1"
 
 readme = "README.md"
 
@@ -15,5 +15,5 @@ description = "Deterministic native compiler and linker discovery for MoonBit to
 preferred_target = "native"
 
 import {
-  "moonbitlang/async@0.22.5",
+  "moonbitlang/async@0.22.7",
 }
