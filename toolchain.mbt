@@ -1,25 +1,28 @@
 ///|
+#derive(Debug, Eq)
 pub(all) enum Host {
   Windows
   Posix
-} derive(Debug, Eq)
+}
 
 ///|
+#derive(Debug, Eq)
 pub struct Tool {
-  pub name : String
-  pub path : String
-} derive(Debug, Eq)
+  name : String
+  path : String
+}
 
 ///|
+#derive(Debug)
 pub struct Toolchain {
-  pub host : Host
-  pub compiler : Tool?
-  pub linker : Tool?
-  pub archiver : Tool?
-  pub symbol_tool : Tool?
-  pub sdk : String?
-  pub diagnostics : Array[String]
-} derive(Debug)
+  host : Host
+  compiler : Tool?
+  linker : Tool?
+  archiver : Tool?
+  symbol_tool : Tool?
+  sdk : String?
+  diagnostics : Array[String]
+}
 
 ///|
 /// Resolve the native tools used by HTTP and Node-API builds.

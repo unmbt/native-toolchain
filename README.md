@@ -17,7 +17,9 @@ moon add unmbt/native-toolchain
 Then import the package from MoonBit:
 
 ```moonbit
-import "unmbt/native-toolchain"
+import {
+  "unmbt/native-toolchain",
+}
 ```
 
 ## Example

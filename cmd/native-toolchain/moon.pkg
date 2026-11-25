@@ -1,6 +1,5 @@
 import {
   "unmbt/native-toolchain" @toolchain,
-  "moonbitlang/async",
   "moonbitlang/core/env",
 }
 
